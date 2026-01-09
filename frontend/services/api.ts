@@ -8,7 +8,11 @@
 import axios, { AxiosError, InternalAxiosRequestConfig, AxiosResponse } from 'axios';
 import { getToken, clearAuth } from '@/utils/auth';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+// Use environment variable if set, otherwise use production URL in browser, localhost in development
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 
+  (typeof window !== 'undefined' && window.location.hostname !== 'localhost' 
+    ? 'https://task-manager-backend-zbom.onrender.com/api' 
+    : 'http://localhost:5000/api');
 
 // Create axios instance
 const apiClient = axios.create({
