@@ -8,11 +8,24 @@
 import axios, { AxiosError, InternalAxiosRequestConfig, AxiosResponse } from 'axios';
 import { getToken, clearAuth } from '@/utils/auth';
 
-// Use environment variable if set, otherwise use production URL in browser, localhost in development
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 
-  (typeof window !== 'undefined' && window.location.hostname !== 'localhost' 
-    ? 'https://task-manager-backend-zbom.onrender.com/api' 
-    : 'http://localhost:5000/api');
+// Build API URL - ensure it always ends with /api
+const getApiUrl = (): string => {
+  // Use environment variable if set
+  if (process.env.NEXT_PUBLIC_API_URL) {
+    const url = process.env.NEXT_PUBLIC_API_URL;
+    // Ensure URL ends with /api
+    return url.endsWith('/api') ? url : `${url}/api`;
+  }
+  
+  // Fallback: production URL in browser, localhost in development
+  if (typeof window !== 'undefined' && window.location.hostname !== 'localhost') {
+    return 'https://task-manager-backend-zbom.onrender.com/api';
+  }
+  
+  return 'http://localhost:5000/api';
+};
+
+const API_URL = getApiUrl();
 
 // Create axios instance
 const apiClient = axios.create({
